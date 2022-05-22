@@ -117,7 +117,7 @@ def transform_area(area):
     if not isinstance(area, str):
         return area
     
-    return round(float(area) / 3.3058)
+    return float(round(float(area) / 3.3058))
 
 
 def init_expanded_dict(prefix, suffices):
