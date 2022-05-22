@@ -1,18 +1,16 @@
-from curses import raw
-from mimetypes import init
-from unicodedata import category
-
-
 def encode_city_land_usage(x):
-    # Encode {'其他': 0, '住': 1, '農': 2, '工': 3, '商': 4, 
-    #         '住商': 5, '其他住宅': 6, nan: nan}
+    """Encode the content in column: '都市土地使用分區'
+
+    Encode {nan/非都市: 0, '住': 1, '農': 2, '工': 3, '商': 4,
+             '住商': 5, '其他住宅': 6, '其他跟住無關的': 7}
+    """
 
     # nan remains
     if not isinstance(x, str):
-        return x
+        return 0
 
     if '非都市' in x:
-        return ""
+        return 0
 
     if '其他' in x:
         end_idx = x.find('(') if '(' in x else len(x) + 1
@@ -20,7 +18,7 @@ def encode_city_land_usage(x):
             return 5
         if '住宅' in x[:end_idx] or '住' in x[:end_idx]:
             return 6
-        return 0
+        return 7
 
     if '住' in x:
         return 1
