@@ -11,7 +11,7 @@ def clean_invalid(dataframe):
     """
     dataframe = dataframe[(dataframe['交易標的']!='土地') & (~dataframe['交易標的'].isna())]
     dataframe['Month'] = dataframe['交易年月日'].str[:-2].astype('float')
-    dataframe = dataframe.query("Month>=10601 and Month<=11003 ")
+    dataframe = dataframe.query("Month>=10601 and Month<=11103 ")
     dataframe = dataframe[(dataframe.Month!=10600) & (dataframe.Month!=10700) & \
                           (dataframe.Month!=10800) & (dataframe.Month!=10900) & (dataframe.Month!=11000)]
     
