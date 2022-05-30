@@ -1,3 +1,5 @@
+import joblib
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import VALID_METRICS
@@ -82,12 +84,28 @@ TRAIN_DATA_PATH = './merged_data/clean_data_future_train.csv'
 TEST_DATA_PATH = './merged_data/clean_data_future_test.csv'
 VAL_SIZE = 0.1
 MAX_DEPTH = 20
+RAMDOM_SEED_SHUFFLE_TRAIN_SET = 0
+
+MLFLOW = True 
+if MLFLOW:
+    import mlflow
+    SERVER_HOST = 'http://localhost:5000'
+    EXPRIMENT_NAME = 'house-prediction'
+    mlflow.set_tracking_uri(SERVER_HOST)
+    mlflow.set_experiment(EXPRIMENT_NAME)
+    mlflow.start_run()
+    mlflow.log_params({'training_data': TRAIN_DATA_PATH,
+                       'testing_data': TEST_DATA_PATH,
+                       'VAL_SIZE': VAL_SIZE,
+                       'MAX_DEPTH': MAX_DEPTH,
+                       'RANDOM_SEED_SHUFFLE_TRAIN_SET': RAMDOM_SEED_SHUFFLE_TRAIN_SET})
+
 
 df_future = pd.read_csv(TRAIN_DATA_PATH)
 df_future_test = pd.read_csv(TEST_DATA_PATH)
 
 df_future = clean_and_drop(df_future)
-df_future = df_future.sample(frac=1, random_state=0)
+df_future = df_future.sample(frac=1, random_state=RAMDOM_SEED_SHUFFLE_TRAIN_SET)
 X_train, y_train = split_features_target(df_future)
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=VAL_SIZE)
 
@@ -98,10 +116,25 @@ model = DecisionTreeRegressor(max_depth=MAX_DEPTH)
 model.fit(X_train, y_train)
 
 print('Training performance: ')
-simple_evaluate(model, X_train, y_train, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_train, y_train, verbose=True)
+if MLFLOW:
+    mlflow.log_metrics({'train-R-square': r2, 'train-MAE': mae, 'train-MSE': mse})
 print()
 print('Evaluation performance: ')
-simple_evaluate(model, X_val, y_val, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_val, y_val, verbose=True)
+if MLFLOW:
+    mlflow.log_metrics({'val-R-square': r2, 'val-MAE': mae, 'val-MSE': mse})
+print()
 print()
 print('Test performance:')
-simple_evaluate(model, X_test, y_test, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_test, y_test, verbose=True)
+if MLFLOW:
+    mlflow.log_metrics({'test-R-square': r2, 'test-MAE': mae, 'test-MSE': mse})
+print()
+
+# Save model
+MODEL_NAME = 'model.pkl'
+joblib.dump(model, MODEL_NAME)
+if MLFLOW: 
+    mlflow.log_artifact(MODEL_NAME)
+    mlflow.end_run()
