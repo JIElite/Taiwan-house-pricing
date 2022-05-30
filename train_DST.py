@@ -2,7 +2,6 @@ import joblib
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import VALID_METRICS
 from sklearn.tree import DecisionTreeRegressor
 
 from eval import simple_evaluate
@@ -94,7 +93,8 @@ if MLFLOW:
     mlflow.set_tracking_uri(SERVER_HOST)
     mlflow.set_experiment(EXPRIMENT_NAME)
     mlflow.start_run()
-    mlflow.log_params({'training_data': TRAIN_DATA_PATH,
+    mlflow.log_params({'model_type': DecisionTreeRegressor.__name__,
+                       'training_data': TRAIN_DATA_PATH,
                        'testing_data': TEST_DATA_PATH,
                        'VAL_SIZE': VAL_SIZE,
                        'MAX_DEPTH': MAX_DEPTH,
@@ -133,8 +133,9 @@ if MLFLOW:
 print()
 
 # Save model
+MODEL_DIR = './models/'
 MODEL_NAME = 'model.pkl'
-joblib.dump(model, MODEL_NAME)
+MODEL_PATH = f'{MODEL_DIR}{MODEL_NAME}'
+joblib.dump(model, MODEL_PATH)
 if MLFLOW: 
-    mlflow.log_artifact(MODEL_NAME)
     mlflow.end_run()
