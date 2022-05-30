@@ -7,3 +7,4 @@
 **/*.pkl
 **/models/*.pkl
 **/models/*.pth
+**/.vscode/
