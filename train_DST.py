@@ -1,6 +1,10 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import VALID_METRICS
 from sklearn.tree import DecisionTreeRegressor
+
+from eval import simple_evaluate
+from utils import split_features_target
 
 
 def clean_and_drop(df):
@@ -73,51 +77,31 @@ def clean_and_drop(df):
     return df
 
 
-def split_features_target(df):
-    X = df.drop(columns=['Unit_Price_Ping'])
-    y = df['Unit_Price_Ping']
-    return X, y
-
-
-def train(model, X_train, y_train):
-    model.fit(X_train, y_train)
-    return model
-
-
-def eval(model, X_test, y_test):
-    from sklearn.metrics import (r2_score, 
-                                 mean_absolute_error, 
-                                 mean_squared_error)
-    
-    y_pred = model.predict(X_test)
-    r2 = r2_score(y_test, y_pred)
-    mae = mean_absolute_error(y_test, y_pred)
-    mse = mean_squared_error(y_test, y_pred)
-    print(f'R2 score: {r2}')
-    print(f'MAE score: {mae}')
-    print(f'MSE score: {mse}')
-    return r2, mae, mse
 
 TRAIN_DATA_PATH = './merged_data/clean_data_future_train.csv'
 TEST_DATA_PATH = './merged_data/clean_data_future_test.csv'
+VAL_SIZE = 0.1
+MAX_DEPTH = 20
+
 df_future = pd.read_csv(TRAIN_DATA_PATH)
 df_future_test = pd.read_csv(TEST_DATA_PATH)
 
 df_future = clean_and_drop(df_future)
 df_future = df_future.sample(frac=1, random_state=0)
 X_train, y_train = split_features_target(df_future)
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.1)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=VAL_SIZE)
 
 df_future_test = clean_and_drop(df_future_test)
 X_test, y_test = split_features_target(df_future_test)
 
-model = train(DecisionTreeRegressor(max_depth=20), X_train, y_train)
+model = DecisionTreeRegressor(max_depth=MAX_DEPTH)
+model.fit(X_train, y_train)
 
 print('Training performance: ')
-eval(model, X_train, y_train)
+simple_evaluate(model, X_train, y_train, verbose=True)
 print()
 print('Evaluation performance: ')
-eval(model, X_val, y_val)
+simple_evaluate(model, X_val, y_val, verbose=True)
 print()
 print('Test performance:')
-eval(model, X_test, y_test)
+simple_evaluate(model, X_test, y_test, verbose=True)
