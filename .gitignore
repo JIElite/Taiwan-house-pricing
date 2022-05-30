@@ -5,3 +5,5 @@
 **/temp/
 **/temp_future/
 **/*.pkl
+**/models/*.pkl
+**/models/*.pth
