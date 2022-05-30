@@ -27,6 +27,7 @@ if MLFLOW:
     import mlflow
     SERVER_HOST = os.environ.get('MLFLOW_SERVER_HOST')
     EXPRIMENT_NAME = 'house-price'
+    SCRIPT_PATH = os.path.basename(__file__)
     mlflow.set_tracking_uri(SERVER_HOST)
     mlflow.set_experiment(EXPRIMENT_NAME)
     mlflow.start_run(run_name='DSTR. Baseline')
@@ -36,6 +37,9 @@ if MLFLOW:
                        'VAL_SIZE': VAL_SIZE,
                        'MAX_DEPTH': MAX_DEPTH,
                        'RANDOM_SEED_SHUFFLE_TRAIN_SET': RAMDOM_SEED_SHUFFLE_TRAIN_SET})
+    # Log current script code
+    mlflow.log_artifact(SCRIPT_PATH)
+
 
 df_future = pd.read_csv(TRAIN_DATA_PATH)
 df_future = simple_drop(df_future)
