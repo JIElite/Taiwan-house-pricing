@@ -1,4 +1,6 @@
+import os
 import joblib
+from datetime import datetime
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -88,8 +90,8 @@ RAMDOM_SEED_SHUFFLE_TRAIN_SET = 0
 MLFLOW = True 
 if MLFLOW:
     import mlflow
-    SERVER_HOST = 'http://localhost:5000'
-    EXPRIMENT_NAME = 'house-prediction'
+    SERVER_HOST = os.environ.get('MLFLOW_SERVER_HOST')
+    EXPRIMENT_NAME = 'house-price'
     mlflow.set_tracking_uri(SERVER_HOST)
     mlflow.set_experiment(EXPRIMENT_NAME)
     mlflow.start_run()
@@ -133,9 +135,12 @@ if MLFLOW:
 print()
 
 # Save model
+timestamp = str(datetime.now())
 MODEL_DIR = './models/'
-MODEL_NAME = 'model.pkl'
+MODEL_NAME = f'model_{timestamp}.pkl'
 MODEL_PATH = f'{MODEL_DIR}{MODEL_NAME}'
 joblib.dump(model, MODEL_PATH)
 if MLFLOW: 
+    mlflow.log_param('model_path', MODEL_PATH)
+    mlflow.log_artifact(MODEL_PATH)
     mlflow.end_run()
