@@ -1,5 +1,6 @@
 **/.ipynb_checkpoints/
 **/data/*.csv
+**/merged_data/*.csv
 **/__pycache__/
 **/temp/
 **/temp_future/
