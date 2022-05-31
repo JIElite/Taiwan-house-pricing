@@ -1,7 +1,7 @@
-from sklearn.metrics import (r2_score, 
+from sklearn.metrics import (r2_score,
                              mean_absolute_error,
                              mean_squared_error)
-    
+
 
 def simple_evaluate(model, X, y, verbose=False):
     y_pred = model.predict(X)
@@ -13,5 +13,6 @@ def simple_evaluate(model, X, y, verbose=False):
         print(f'R2 score: {r2}')
         print(f'MAE score: {mae}')
         print(f'MSE score: {mse}')
+        print()
 
     return r2, mae, mse
