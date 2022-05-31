@@ -16,7 +16,6 @@ def simple_drop(df):
 
 
 TRAIN_DATA_PATH = './merged_data/clean_data_future_train.csv'
-TEST_DATA_PATH = './merged_data/clean_data_future_test.csv'
 VAL_SIZE = 0.1
 MAX_DEPTH = 15
 RAMDOM_SEED_SHUFFLE_TRAIN_SET = 0
@@ -32,7 +31,6 @@ if MLFLOW:
     mlflow.start_run(run_name='DSTR. Baseline')
     mlflow.log_params({'model_type': DecisionTreeRegressor.__name__,
                        'training_data': TRAIN_DATA_PATH,
-                       'testing_data': TEST_DATA_PATH,
                        'VAL_SIZE': VAL_SIZE,
                        'MAX_DEPTH': MAX_DEPTH,
                        'RANDOM_SEED_SHUFFLE_TRAIN_SET': RAMDOM_SEED_SHUFFLE_TRAIN_SET})
