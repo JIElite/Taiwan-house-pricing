@@ -116,8 +116,10 @@ df_future_train = df_future.loc[df_future['Month'] <= 202110]
 df_future_val = df_future.loc[df_future['Month'] > 202110]
 X_train, y_train = split_features_target(df_future_train)
 X_val, y_val = split_features_target(df_future_val)
-X_val_202111, y_val_202111 = split_features_target(df_future_val.loc[df_future_val['Month'] == 202111])
-X_val_202112, y_val_202112 = split_features_target(df_future_val.loc[df_future_val['Month'] == 202112])
+X_val_202111, y_val_202111 = split_features_target(
+    df_future_val.loc[df_future_val['Month'] == 202111])
+X_val_202112, y_val_202112 = split_features_target(
+    df_future_val.loc[df_future_val['Month'] == 202112])
 
 df_future_test = clean_and_drop(df_future_test)
 X_test, y_test = split_features_target(df_future_test)
