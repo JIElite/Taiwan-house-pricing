@@ -84,7 +84,7 @@ def clean_and_drop(df):
 TRAIN_DATA_PATH = './merged_data/clean_data_future_train.csv'
 TEST_DATA_PATH = './merged_data/clean_data_future_test.csv'
 VAL_SIZE = 0.1
-MAX_DEPTH = 20
+MAX_DEPTH = 15
 RAMDOM_SEED_SHUFFLE_TRAIN_SET = 0
 
 MLFLOW = True
@@ -109,12 +109,15 @@ if MLFLOW:
 df_future = pd.read_csv(TRAIN_DATA_PATH)
 df_future_test = pd.read_csv(TEST_DATA_PATH)
 
+# Split the training set and validation set with datetime
 df_future = clean_and_drop(df_future)
-df_future = df_future.sample(
-    frac=1, random_state=RAMDOM_SEED_SHUFFLE_TRAIN_SET)
-X_train, y_train = split_features_target(df_future)
-X_train, X_val, y_train, y_val = train_test_split(
-    X_train, y_train, test_size=VAL_SIZE)
+df_future['Month'] = df_future['Month'].astype(int)
+df_future_train = df_future.loc[df_future['Month'] <= 202110]
+df_future_val = df_future.loc[df_future['Month'] > 202110]
+X_train, y_train = split_features_target(df_future_train)
+X_val, y_val = split_features_target(df_future_val)
+X_val_202111, y_val_202111 = split_features_target(df_future_val.loc[df_future_val['Month'] == 202111])
+X_val_202112, y_val_202112 = split_features_target(df_future_val.loc[df_future_val['Month'] == 202112])
 
 df_future_test = clean_and_drop(df_future_test)
 X_test, y_test = split_features_target(df_future_test)
@@ -127,18 +130,13 @@ r2, mae, mse = simple_evaluate(model, X_train, y_train, verbose=True)
 if MLFLOW:
     mlflow.log_metrics(
         {'train-R-square': r2, 'train-MAE': mae, 'train-MSE': mse})
-print()
+
 print('Evaluation performance: ')
-r2, mae, mse = simple_evaluate(model, X_val, y_val, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_val_202111, y_val_202111, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_val_202112, y_val_202112, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_val, y_val, verbose=False)
 if MLFLOW:
     mlflow.log_metrics({'val-R-square': r2, 'val-MAE': mae, 'val-MSE': mse})
-print()
-print()
-print('Test performance:')
-r2, mae, mse = simple_evaluate(model, X_test, y_test, verbose=True)
-if MLFLOW:
-    mlflow.log_metrics({'test-R-square': r2, 'test-MAE': mae, 'test-MSE': mse})
-print()
 
 # Save model
 timestamp = str(datetime.now())
