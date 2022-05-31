@@ -3,7 +3,6 @@ import joblib
 from datetime import datetime
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 
 from eval import simple_evaluate
@@ -82,7 +81,6 @@ def clean_and_drop(df):
 
 
 TRAIN_DATA_PATH = './merged_data/clean_data_future_train.csv'
-TEST_DATA_PATH = './merged_data/clean_data_future_test.csv'
 VAL_SIZE = 0.1
 MAX_DEPTH = 15
 RAMDOM_SEED_SHUFFLE_TRAIN_SET = 0
@@ -98,7 +96,6 @@ if MLFLOW:
     mlflow.start_run(run_name='Train Decision Tree Regression')
     mlflow.log_params({'model_type': DecisionTreeRegressor.__name__,
                        'training_data': TRAIN_DATA_PATH,
-                       'testing_data': TEST_DATA_PATH,
                        'VAL_SIZE': VAL_SIZE,
                        'MAX_DEPTH': MAX_DEPTH,
                        'RANDOM_SEED_SHUFFLE_TRAIN_SET': RAMDOM_SEED_SHUFFLE_TRAIN_SET})
@@ -107,22 +104,19 @@ if MLFLOW:
 
 
 df_future = pd.read_csv(TRAIN_DATA_PATH)
-df_future_test = pd.read_csv(TEST_DATA_PATH)
 
 # Split the training set and validation set with datetime
 df_future = clean_and_drop(df_future)
 df_future['Month'] = df_future['Month'].astype(int)
 df_future_train = df_future.loc[df_future['Month'] <= 202110]
-df_future_val = df_future.loc[df_future['Month'] > 202110]
 X_train, y_train = split_features_target(df_future_train)
+
+df_future_val = df_future.loc[df_future['Month'] > 202110]
 X_val, y_val = split_features_target(df_future_val)
 X_val_202111, y_val_202111 = split_features_target(
     df_future_val.loc[df_future_val['Month'] == 202111])
 X_val_202112, y_val_202112 = split_features_target(
     df_future_val.loc[df_future_val['Month'] == 202112])
-
-df_future_test = clean_and_drop(df_future_test)
-X_test, y_test = split_features_target(df_future_test)
 
 model = DecisionTreeRegressor(max_depth=MAX_DEPTH)
 model.fit(X_train, y_train)

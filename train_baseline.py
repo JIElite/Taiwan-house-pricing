@@ -3,10 +3,8 @@ import joblib
 from datetime import datetime
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 from tqdm import tqdm
-from train_DST import X_val_202111
 
 from utils import split_features_target
 from eval import simple_evaluate
@@ -51,11 +49,6 @@ df_future_val = df_future.loc[df_future['Month'] > 202110]
 
 X_train, y_train = split_features_target(df_future_val)
 X_val, y_val = split_features_target(df_future_val)
-
-df_future_test = pd.read_csv(TEST_DATA_PATH)
-df_future_test = simple_drop(df_future_test)
-X_test, y_test = split_features_target(df_future_test)
-
 
 avg_train_r2, avg_train_mae, avg_train_mse = 0, 0, 0
 avg_val_r2, avg_val_mae, avg_val_mse = 0, 0, 0
