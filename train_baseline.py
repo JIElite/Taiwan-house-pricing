@@ -45,7 +45,7 @@ df_future['Month'] = df_future['Month'].astype(int)
 df_future_train = df_future.loc[df_future['Month'] <= 202110]
 df_future_val = df_future.loc[df_future['Month'] > 202110]
 
-X_train, y_train = split_features_target(df_future_val)
+X_train, y_train = split_features_target(df_future_train)
 X_val, y_val = split_features_target(df_future_val)
 
 avg_train_r2, avg_train_mae, avg_train_mse = 0, 0, 0
