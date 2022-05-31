@@ -1,3 +1,4 @@
+**/notebook/.ipynb_checkpoints
 **/data/*.csv
 **/merged_data/*.csv
 **/__pycache__/
