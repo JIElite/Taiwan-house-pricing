@@ -60,6 +60,58 @@ def clean_and_drop(df):
     # 把超大轉移坪數刪掉
     df = df.loc[df['Transfer_Total_Ping'] < 150]
 
+    # Transaction_Land == 0 只有 5 筆
+    df = df.loc[df['Transaction_Land'] != 0]
+
+    # 只取交易一個建物的案子
+    df = df.loc[df['Transaction_Building'] == 1]
+
+    # 交易車位數 > 3 只有 98 個案例，比較少，故去除
+    df = df.loc[df['Transaction_Parking'] <= 3]
+
+    # 目前不特別區分備註欄位是不是空的，因為用 one-hot encoding
+    # 處理了，所以 Note_<tag> 不是全部都是 0 就代表有備註的項目
+    df = df.drop(columns=['Note_Null'])
+
+    # 去除政府承購, 去除後在 future data 中皆為 0
+    df = df.loc[df['Note_Gov'] == 0]
+    df = df.drop(columns=['Note_Gov'])
+
+    # Only 85 cases in the dataset
+    df = df.drop(columns=['Note_Layer'])
+
+    # 毛胚屋，去除後皆為 0
+    df = df.loc[df['Note_BlankHouse'] == 0]
+    df = df.drop(columns=['Note_BlankHouse'])
+
+    # 債權相關，只有 3 個，去除後皆為 0
+    df = df.loc[df['Note_Debt'] == 0]
+    df = df.drop(columns=['Note_Debt'])
+
+    # 備註中有提到有電梯的只有 2 筆
+    df = df.loc[df['Note_Elevator'] == 0]
+    df = df.drop(columns=['Note_Elevator'])
+
+    # Note_Shop, 只有 110 筆
+    df = df.loc[df['Note_Shop'] == 0]
+    df = df.drop(columns=['Note_Shop'])
+
+    # All 0
+    df = df.drop(columns=['Note_Additions', 'Note_Balcony',
+                          'Note_PublicUtilities', 'Note_PartRegister',
+                          'Note_Negotiate', 'Note_OnlyParking',
+                          'Note_Overbuild', 'Note_BuildWithLandholder',
+                          'Note_Defect', 'Note_Renewal', 'Note_DistressSale ',
+                          'Note_OverdueInherit', 'Note_DeformedLand'])
+
+    # **Notice**
+    # 因為 future price data 應該是預設屋的資料，所以每一欄位的 presold 應該都要是 1
+    # 但是有其他是 0, 所以直接刪掉這個欄位
+    df = df.drop(columns=['Note_Presold'])
+
+    # 只取跟親友無關的交易
+    df = df.loc[df['Note_Relationships'] == 0]
+
     # 我先刪除 area_m2, 因為覺得跟 area_ping 的意義很類似，但是不確定會不會有些微差距。
     # 因為在 future data 中，manager 都是 0，所以也把這個欄位刪除
     # trading_floor_count 有 0 的情況，這樣應該不是房屋交易
@@ -68,7 +120,7 @@ def clean_and_drop(df):
 
     # Convert the categorical features' dtype to 'category'
     category_columns = ['Type', 'Month', 'Month_raw',
-                        'City_Land_Usage', 'Main_Usage_Business',
+                        'room', 'City_Land_Usage', 'Main_Usage_Business',
                         'Building_Material_S', 'Building_Material_R', 'Building_Material_C',
                         'Building_Material_steel', 'Building_Material_B',
                         'Building_Material_W', 'Building_Material_iron',
