@@ -171,13 +171,20 @@ X_val_202112, y_val_202112 = split_features_target(
     df_future_val.loc[df_future_val['Month'] == 202112])
 
 model = DecisionTreeRegressor(max_depth=MAX_DEPTH)
-model.fit(X_train, y_train)
+model.fit(X_train[:-10000], y_train[:-10000])
 
 print('Training performance: ')
-r2, mae, mse = simple_evaluate(model, X_train, y_train, verbose=True)
+r2, mae, mse = simple_evaluate(model, X_train[:-10000], y_train[:-10000], verbose=True)
 if MLFLOW:
     mlflow.log_metrics(
         {'train-R-square': r2, 'train-MAE': mae, 'train-MSE': mse})
+
+print('Train-Val performance:', )
+r2, mae, mse = simple_evaluate(model, X_train[-10000:], y_train[-10000:], verbose=True)
+if MLFLOW:
+    mlflow.log_metrics(
+        {'train-val-R-square': r2, 'train-val-MAE': mae, 'train-val-MSE': mse})
+
 
 print('Evaluation performance: ')
 r2, mae, mse = simple_evaluate(model, X_val_202111, y_val_202111, verbose=True)
