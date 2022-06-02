@@ -141,7 +141,7 @@ MLFLOW = True
 if MLFLOW:
     import mlflow
     SERVER_HOST = os.environ.get('MLFLOW_SERVER_HOST')
-    EXPRIMENT_NAME = 'house-price'
+    EXPRIMENT_NAME = 'house_project'
     SCRIPT_PATH = os.path.basename(__file__)
     mlflow.set_tracking_uri(SERVER_HOST)
     mlflow.set_experiment(EXPRIMENT_NAME)
