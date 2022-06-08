@@ -8,10 +8,15 @@ from eval import evaluate_partitions, default_partitions
 
 
 def train_model(model, model_params, exp_params, use_mlflow=False, save_model=True):
+    assert 'run_name' in exp_params
+    assert 'training_data' in exp_params
+    assert 'testing_data' in exp_params
+    assert 'model_type' in exp_params
+
     df_train = pd.read_csv(exp_params['training_data'])
     df_test = pd.read_csv(exp_params['testing_data'])
-    target = exp_params['target']
-    val_size = exp_params['val_size']
+    target = exp_params.get('target', 'Total_price')
+    val_size = exp_params.get('val_size', 0.1)
     X_train, y_train = split_features_target(df_train, target_field=target)
     X_train, X_val, y_train, y_val = train_test_split(
         X_train, y_train, test_size=val_size)
@@ -24,7 +29,8 @@ def train_model(model, model_params, exp_params, use_mlflow=False, save_model=Tr
         mlflow.log_params(exp_params)
         mlflow.log_params(model_params)
         # log execution script
-        mlflow.log_artifact(exp_params['script'])
+        if 'script' in exp_params:
+            mlflow.log_artifact(exp_params['script'])
 
     model.fit(X_train, y_train)
     scores = {}

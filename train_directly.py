@@ -20,14 +20,18 @@ VAL_SIZE = 0.1
 
 if __name__ == '__main__':
     exp_params = {
-        'run_name': RUN_NAME,
-        'training_data': TRAIN_DATA_PATH,
-        'testing_data': TEST_DATA_PATH,
-        'model_type': MODEL,
+        'run_name': RUN_NAME,  # necessary field
+        'training_data': TRAIN_DATA_PATH,  # necessary field
+        'testing_data': TEST_DATA_PATH,  # necessary field
+        'model_type': MODEL,  # necessary field
         'script': SCRIPT_PATH,
         'target': TARGET,
         'val_size': VAL_SIZE,
     }
+    assert 'run_name' in exp_params
+    assert 'training_data' in exp_params
+    assert 'testing_data' in exp_params
+    assert 'model_type' in exp_params
     model_params = {
         'max_depth': MAX_DEPTH,
         'min_samples_leaf': MIN_SAMPLES_LEAF,
