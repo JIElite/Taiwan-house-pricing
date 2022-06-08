@@ -1,5 +1,4 @@
 import os
-from tkinter import N
 
 from sklearn.ensemble import RandomForestRegressor
 
