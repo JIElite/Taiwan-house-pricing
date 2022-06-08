@@ -28,10 +28,6 @@ if __name__ == '__main__':
         'target': TARGET,
         'val_size': VAL_SIZE,
     }
-    assert 'run_name' in exp_params
-    assert 'training_data' in exp_params
-    assert 'testing_data' in exp_params
-    assert 'model_type' in exp_params
     model_params = {
         'max_depth': MAX_DEPTH,
         'min_samples_leaf': MIN_SAMPLES_LEAF,
