@@ -4,14 +4,14 @@ from sklearn.metrics import (r2_score,
 
 
 default_partitions = {
-    '[0, 10)': 'Transfer_Total_Ping >= 0 and Transfer_Total_Ping < 10',
-    '[10, 20)': 'Transfer_Total_Ping >= 10 and Transfer_Total_Ping < 20',
-    '[20, 30)': 'Transfer_Total_Ping >= 20 and Transfer_Total_Ping < 30',
-    '[30, 40)': 'Transfer_Total_Ping >= 30 and Transfer_Total_Ping < 40',
-    '[40, 50)': 'Transfer_Total_Ping >= 40 and Transfer_Total_Ping < 50',
-    '[50, 60)': 'Transfer_Total_Ping >= 50 and Transfer_Total_Ping < 60',
-    '[60, 80)': 'Transfer_Total_Ping >= 60 and Transfer_Total_Ping < 80',
-    '[80-': 'Transfer_Total_Ping >= 80',
+    '0-10': 'Transfer_Total_Ping >= 0 and Transfer_Total_Ping < 10',
+    '10-20': 'Transfer_Total_Ping >= 10 and Transfer_Total_Ping < 20',
+    '20-30': 'Transfer_Total_Ping >= 20 and Transfer_Total_Ping < 30',
+    '30-40': 'Transfer_Total_Ping >= 30 and Transfer_Total_Ping < 40',
+    '40-50': 'Transfer_Total_Ping >= 40 and Transfer_Total_Ping < 50',
+    '50-60': 'Transfer_Total_Ping >= 50 and Transfer_Total_Ping < 60',
+    '60-80': 'Transfer_Total_Ping >= 60 and Transfer_Total_Ping < 80',
+    '80-': 'Transfer_Total_Ping >= 80',
 }
 
 
