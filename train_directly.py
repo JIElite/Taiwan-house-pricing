@@ -5,7 +5,7 @@ from sklearn.tree import DecisionTreeRegressor
 from model_training import train_model
 
 
-MLFLOW = False
+MLFLOW = True
 
 RUN_NAME = 'Decision Tree Regressor'
 TRAIN_DATA_PATH = 'merged_data/20220606/clean_data_train_all.csv'
@@ -24,7 +24,7 @@ if __name__ == '__main__':
         'training_data': TRAIN_DATA_PATH,
         'testing_data': TEST_DATA_PATH,
         'model_type': MODEL,
-        'script_path': SCRIPT_PATH,
+        'script': SCRIPT_PATH,
         'target': TARGET,
         'val_size': VAL_SIZE,
     }
