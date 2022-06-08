@@ -4,10 +4,18 @@ from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 
 from utils import split_features_target
 from mlflow_utils import environment_setup
-from eval import evaluate_partitions, default_partitions
+from eval import evaluate_partitions, default_partitions, evaluate_builtin_metric
 
 
-def train_model(model, model_params, exp_params, use_mlflow=False, save_model=True):
+def train_model(model, model_params, exp_params, scoring=mean_absolute_percentage_error,
+                use_mlflow=False, save_model=True):
+    """
+    Args:
+        scoring: callable or list of string, Defaults to mean_absolute_percentage_error.
+            please refer to https://scikit-learn.org/stable/modules/model_evaluation.html#common-cases-predefined-values
+            for predefined values.
+
+    """
     assert 'run_name' in exp_params
     assert 'training_data' in exp_params
     assert 'testing_data' in exp_params
@@ -34,13 +42,12 @@ def train_model(model, model_params, exp_params, use_mlflow=False, save_model=Tr
 
     model.fit(X_train, y_train)
     scores = {}
-    train_mape = mean_absolute_percentage_error(
-        y_train, model.predict(X_train))
-    val_mape = mean_absolute_percentage_error(y_val, model.predict(X_val))
-    test_mape = mean_absolute_percentage_error(y_test, model.predict(X_test))
-    scores['train-MAPE'] = train_mape
-    scores['val-MAPE'] = val_mape
-    scores['test-MAPE'] = test_mape
+    scores.update(evaluate_builtin_metric(model, X_train, y_train,
+                                          scoring, index_predix='train-'))
+    scores.update(evaluate_builtin_metric(model, X_val, y_val,
+                                          scoring, index_predix='val-'))
+    scores.update(evaluate_builtin_metric(model, X_test, y_test,
+                                          scoring, index_predix='test-'))
     print(scores)
 
     train_df = X_train

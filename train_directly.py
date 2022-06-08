@@ -5,7 +5,7 @@ from sklearn.tree import DecisionTreeRegressor
 from model_training import train_model
 
 
-MLFLOW = True
+MLFLOW = False
 
 RUN_NAME = 'Decision Tree Regressor'
 TRAIN_DATA_PATH = 'merged_data/20220606/clean_data_train_all.csv'
@@ -33,4 +33,5 @@ if __name__ == '__main__':
         'min_samples_leaf': MIN_SAMPLES_LEAF,
     }
     model = DecisionTreeRegressor(**model_params)
-    train_model(model, model_params, exp_params=exp_params, use_mlflow=MLFLOW)
+    train_model(model, model_params, exp_params=exp_params, use_mlflow=MLFLOW,
+                scoring=['r2', 'neg_mean_absolute_percentage_error'])

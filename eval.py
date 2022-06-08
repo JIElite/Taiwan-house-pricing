@@ -1,6 +1,9 @@
 from sklearn.metrics import (r2_score,
                              mean_absolute_error,
-                             mean_squared_error)
+                             mean_squared_error,
+                             mean_absolute_percentage_error,
+                             check_scoring,
+                             )
 
 
 default_partitions = {
@@ -12,6 +15,18 @@ default_partitions = {
     '50-60': 'Transfer_Total_Ping >= 50 and Transfer_Total_Ping < 60',
     '60-80': 'Transfer_Total_Ping >= 60 and Transfer_Total_Ping < 80',
     '80-': 'Transfer_Total_Ping >= 80',
+}
+
+
+metrics_brief_name = {
+    mean_absolute_error: 'MAE',
+    mean_squared_error: 'MSE',
+    mean_absolute_percentage_error: 'MAPE',
+    r2_score: 'R-square',
+    'neg_mean_absolute_error': 'MAE',
+    'neg_mean_squared_error': 'MSE',
+    'neg_mean_absolute_percentage_error': 'MAPE',
+    'r2': 'R-square',
 }
 
 
@@ -28,6 +43,27 @@ def simple_evaluate(model, X, y, verbose=False):
         print()
 
     return r2, mae, mse
+
+
+def evaluate_builtin_metric(model, X, y, scoring, index_predix=''):
+    scores = {}
+
+    if callable(scoring):
+        scorers = scoring
+        metric_name = metrics_brief_name[scoring]
+        scores[index_predix + metric_name] = scorers(y, model.predict(X))
+    elif scoring is None or isinstance(scoring, str):
+        scorers = check_scoring(model, scoring)
+        metric_name = metrics_brief_name[scoring]
+        scores[index_predix + metric_name] = scorers(y, model.predict(X))
+    else:
+        for scoring_str in scoring:
+            scorers = check_scoring(model, scoring_str)
+            metric_name = metrics_brief_name[scorers._score_func]
+            scores[index_predix +
+                   metric_name] = scorers._score_func(y, model.predict(X))
+
+    return scores
 
 
 def evaluate_partitions(model, df, partitions, metric, target_field, index_prefix=''):
